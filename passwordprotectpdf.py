@@ -56,23 +56,38 @@ def main():
     if not filepaths:
         raise FileNotFoundError("Input files not found.")
     logging.debug("{} files found.".format(len(filepaths)))
-    password = getpass()
-    retyped_password = getpass()
-    if password != retyped_password:
-        raise ValueError("""The two passwords do not match.""")
-    if not os.path.isdir(args.output_folder):
-        os.mkdir(args.output_folder)
+
+    # Check if all files exist.
     for input_filepath in filepaths:
         if os.path.isdir(input_filepath):
+            del password
             raise IsADirectoryError(
                 dedent(f"""{input_filepath} is a directory, but it
                         need to be a path."""))
+
+    # Prompt and save password.
+    # TODO: Change password into a class to avoid memory leaks.
+    password = getpass()
+    retyped_password = getpass()
+    if password != retyped_password:
+        del password
+        del retyped_password
+        raise ValueError("""The two passwords do not match.""")
+    del retyped_password
+
+    # Create output folder
+    if not os.path.isdir(args.output_folder):
+        os.mkdir(args.output_folder)
+
+    for input_filepath in filepaths:
         filename = os.path.basename(input_filepath)
         output_filepath = os.path.join(args.output_folder, filename)
         if os.path.exists(output_filepath):
             prompt = input(f"{filename} already exists. Overwrite? (Y/N)")
             if prompt[0].upper() != 'Y':
                 continue
+
+        # Open input file
         logging.info(f"Opening {input_filepath}...")
         input_file = PdfFileReader(input_filepath)
         logging.info(f"Opened {input_filepath}...")
@@ -85,13 +100,23 @@ def main():
 
         output_writer.encrypt(password)
 
+        # Write to output file
         logging.info(f"Writing to {output_filepath}...")
         with open(output_filepath, "wb") as output_file:
             output_writer.write(output_file)
         logging.info(f"Written to {output_filepath}...")
 
+    # Delete password to avoid memory leaks
+    ref_count = sys.getrefcount(password)
+    if ref_count > 2:
+        logging.warning(dedent(f"""Ref count for the password variable
+                                   is {ref_count}. Any number larger than
+                                   2 may indicate a memory leak."""))
+    else:
+        logging.debug(dedent(f"""Ref count for the password: {ref_count}.
+                                 (Values greater than 2 could be a cause for
+                                 memory leak concerns.)"""))
     del password
-    del retyped_password
     gc.collect()
 
 
