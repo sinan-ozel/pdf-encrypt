@@ -8,4 +8,8 @@ will be used for all of them.
 
 # Usage
 
+```
+passwordprotectpdf.py *.pdf --output-folder output 
+```
+
 # Setup
