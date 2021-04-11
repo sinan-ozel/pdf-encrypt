@@ -23,32 +23,7 @@ import logging
 import gc
 
 
-def main():
-    parser = ArgumentParser(description=__doc__,
-                            formatter_class=ArgumentDefaultsHelpFormatter)
-    parser.add_argument("FILES",
-                        type=str,
-                        help=dedent("""
-                            Path to the PDF file to encrypt.
-                            Wildcards are allowed.
-                            """))
-    parser.add_argument("--output-folder",
-                        "-o",
-                        type=str,
-                        default='output',
-                        help=dedent("""
-                            Output path to put all the files in.
-                            If left blank, current path will be used.
-
-                            If it does not exist, it will be created."""))
-    parser.add_argument("--verbosity",
-                        "-v",
-                        type=str,
-                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
-                        default='ERROR',
-                        help=dedent("""Set verbosity."""))
-    args = parser.parse_args(sys.argv[1:])
-
+def main(args):
     logging.basicConfig(level=args.verbosity)
     logging.raiseExceptions = True
 
@@ -121,4 +96,29 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser(description=__doc__,
+                            formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument("FILES",
+                        type=str,
+                        help=dedent("""
+                            Path to the PDF file to encrypt.
+                            Wildcards are allowed.
+                            """))
+    parser.add_argument("--output-folder",
+                        "-o",
+                        type=str,
+                        default='encrypted',
+                        help=dedent("""
+                            Output path to put all the files in.
+                            If left blank, current path will be used.
+
+                            If it does not exist, it will be created."""))
+    parser.add_argument("--verbosity",
+                        "-v",
+                        type=str,
+                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
+                        default='ERROR',
+                        help=dedent("""Set verbosity."""))
+    args = parser.parse_args(sys.argv[1:])
+
+    main(args)
