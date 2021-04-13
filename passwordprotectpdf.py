@@ -104,10 +104,17 @@ if __name__ == "__main__":
                             Path to the PDF file to encrypt.
                             Wildcards are allowed.
                             """))
+    parser.add_argument("--suffix",
+                        "-s",
+                        default="encrypted",
+                        help=dedent("""
+                            Suffix to add to the end of the output filename, 
+                            after a dash (-) and before the file xtensioni .pdf.""")
+                        )
     parser.add_argument("--output-folder",
                         "-o",
                         type=str,
-                        default='encrypted',
+                        default='.',
                         help=dedent("""
                             Output path to put all the files in.
                             If left blank, current path will be used.
