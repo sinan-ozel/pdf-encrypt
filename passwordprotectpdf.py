@@ -24,7 +24,7 @@ import gc
 
 
 def main(args):
-    logging.basicConfig(level=args.verbosity)
+    logging.basicConfig(level=args.log_level)
     logging.raiseExceptions = True
 
     filepaths = glob(args.FILES)
@@ -35,10 +35,8 @@ def main(args):
     # Check if all files exist.
     for input_filepath in filepaths:
         if os.path.isdir(input_filepath):
-            del password
-            raise IsADirectoryError(
-                dedent(f"""{input_filepath} is a directory, but it
-                        need to be a path."""))
+            raise IsADirectoryError(f"{input_filepath} is a directory, but it "
+                                    f"needs to be a path.")
 
     # Prompt and save password.
     # TODO: Change password into a class to avoid memory leaks.
@@ -100,32 +98,25 @@ if __name__ == "__main__":
                             formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument("FILES",
                         type=str,
-                        help=dedent("""
-                            Path to the PDF file to encrypt.
-                            Wildcards are allowed.
-                            """))
+                        help="Path to the PDF file to encrypt. "
+                             "Wildcards are allowed.")
     parser.add_argument("--suffix",
                         "-s",
-                        default="encrypted",
-                        help=dedent("""
-                            Suffix to add to the end of the output filename, 
-                            after a dash (-) and before the file xtensioni .pdf.""")
-                        )
+                        default="-encrypted",
+                        help="Suffix to add to output filename "
+                             "before the file extension .pdf.")
     parser.add_argument("--output-folder",
                         "-o",
                         type=str,
                         default='.',
-                        help=dedent("""
-                            Output path to put all the files in.
-                            If left blank, current path will be used.
-
-                            If it does not exist, it will be created."""))
-    parser.add_argument("--verbosity",
-                        "-v",
+                        help="Output path to put all the files in. "
+                             "If left blank, current path will be used. "
+                             "If it does not exist, it will be created.")
+    parser.add_argument("--log-level",
                         type=str,
                         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR'],
                         default='ERROR',
-                        help=dedent("""Set verbosity."""))
+                        help="Set logging level.")
     args = parser.parse_args(sys.argv[1:])
 
     main(args)
