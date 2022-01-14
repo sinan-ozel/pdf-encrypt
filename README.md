@@ -8,11 +8,11 @@ will be used for all of them.
 
 # Usage
 
-To password-protect all PDF files in the current directory and put the
+To encrypt all PDF files in the current directory and put the
 password-protected copies of these files in a folder called `output`, run:
 
 ```
-passwordprotectpdf *.pdf --output-folder output
+pdf-encrypt *.pdf --output-folder output
 ```
 
 # Download & Installation

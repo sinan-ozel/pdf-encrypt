@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-passwordprotectpdf.
+pdf-encrypt
 
 Command-line tool to add password to multiple PDF files.
 
@@ -9,7 +9,7 @@ files can be password-protected at the same time, but the same password
 will be used for all of them.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = 'Sinan Ozel'
 
 import sys
