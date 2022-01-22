@@ -38,18 +38,15 @@ class Password:
         return self.password
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.password = ' ' * 32
         del self.password
-        gc
+        gc.collect()
 
 
-def main(filepaths, suffix, output_folder):
-    print(filepaths)
-    print(filepaths)
+def main(filepaths, suffix:str=None, output_folder:str=None):
     if isinstance(filepaths, str):
         filepaths = glob(filepaths)
     if not filepaths:
-        raise FileNotFoundError("No input filenames.")
+        raise ValueError("No input filenames.")
     logging.debug("{} files found.".format(len(filepaths)))
 
     # Check if all files exist.
@@ -69,17 +66,23 @@ def main(filepaths, suffix, output_folder):
     # del retyped_password
 
     with Password() as password:
+        if output_folder is None:
+            output_folder = os.getcwd()
         # Create output folder
         if not os.path.isdir(output_folder):
             # TODO: Add recursive folder support.
             os.mkdir(output_folder)
 
         for input_filepath in filepaths:
-            filename = os.path.basename(input_filepath)
-            # TODO: Add the suffix.
-            output_filepath = os.path.join(output_folder, filename)
+            basename = os.path.basename(input_filepath)
+            if suffix is not None:
+                filename, extension = os.path.splitext(basename)
+                output_filename = filename + suffix + '.' + extension
+            else:
+                output_filename = basename
+            output_filepath = os.path.join(output_folder, output_filename)
             if os.path.exists(output_filepath):
-                prompt = input(f"{filename} already exists. Overwrite? (Y/N)")
+                prompt = input(f"{output_filename} already exists. Overwrite? (Y/N)")
                 if prompt[0].upper() != 'Y':
                     continue
 
