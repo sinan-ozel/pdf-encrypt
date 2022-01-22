@@ -5,6 +5,6 @@ setup(
     description='A cross-platform tool to encrypt PDF files.',
     version='0.2.0',
     author='Sinan Ozel',
-    license='',  # TODO: fill in the license
+    license='MIT',
     packages=['PyPDF2'],
 )
