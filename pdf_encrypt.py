@@ -34,9 +34,6 @@ class Password:
 
         return password
 
-    def __get__(self):
-        return self.password
-
     def __exit__(self, exc_type, exc_val, exc_tb):
         del self.password
         gc.collect()
@@ -54,16 +51,6 @@ def main(filepaths, suffix:str=None, output_folder:str=None):
         if os.path.isdir(input_filepath):
             raise IsADirectoryError(f"{input_filepath} is a directory, but it "
                                     f"needs to be a path.")
-
-    # # Prompt and save password.
-    # # TODO: Change password into a class to avoid memory leaks.
-    # password = getpass()
-    # retyped_password = getpass()
-    # if password != retyped_password:
-    #     del password
-    #     del retyped_password
-    #     raise ValueError("""The two passwords do not match.""")
-    # del retyped_password
 
     with Password() as password:
         if output_folder is None:
