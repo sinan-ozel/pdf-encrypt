@@ -23,6 +23,11 @@ from SecureString import clearmem
 
 
 class Password:
+    """Ask for a password, then securely delete it from memory.
+
+    Inspired by the following blog post:
+    https://www.sjoerdlangkemper.nl/2016/06/09/clearing-memory-in-python/
+    """
     def __enter__(self):
         self.password = getpass()
         retyped_passwd = getpass()
