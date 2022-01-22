@@ -19,24 +19,23 @@ from glob import glob
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from getpass import getpass
 import logging
-import gc
+from SecureString import clearmem
+
 
 class Password:
     def __enter__(self):
-        password = getpass()
-        retyped_password = getpass()
-        if password != retyped_password:
-            del password
-            del retyped_password
+        self.password = getpass()
+        retyped_passwd = getpass()
+        if self.password != retyped_passwd:
+            clearmem(self.password)
+            clearmem(retyped_passwd)
             raise ValueError("""The two passwords do not match.""")
-        del retyped_password
-        self.password = password
+        clearmem(retyped_passwd)
 
-        return password
+        return self.password
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        del self.password
-        gc.collect()
+        clearmem(self.password)
 
 
 def main(filepaths, suffix:str=None, output_folder:str=None):
@@ -52,49 +51,45 @@ def main(filepaths, suffix:str=None, output_folder:str=None):
             raise IsADirectoryError(f"{input_filepath} is a directory, but it "
                                     f"needs to be a path.")
 
-    with Password() as password:
-        if output_folder is None:
-            output_folder = os.getcwd()
-        # Create output folder
-        if not os.path.isdir(output_folder):
-            # TODO: Add recursive folder support.
-            os.mkdir(output_folder)
+    if output_folder is None:
+        output_folder = os.getcwd()
+    # Create output folder
+    if not os.path.isdir(output_folder):
+        os.mkdir(output_folder)
 
-        for input_filepath in filepaths:
-            basename = os.path.basename(input_filepath)
-            if suffix is not None:
-                filename, extension = os.path.splitext(basename)
-                output_filename = filename + suffix + '.' + extension
-            else:
-                output_filename = basename
-            output_filepath = os.path.join(output_folder, output_filename)
-            if os.path.exists(output_filepath):
-                prompt = input(f"{output_filename} already exists. Overwrite? (Y/N)")
-                if prompt[0].upper() != 'Y':
-                    continue
+    for input_filepath in filepaths:
+        basename = os.path.basename(input_filepath)
+        if suffix is not None:
+            filename, extension = os.path.splitext(basename)
+            output_filename = filename + suffix + '.' + extension
+        else:
+            output_filename = basename
+        output_filepath = os.path.join(output_folder, output_filename)
+        if os.path.exists(output_filepath):
+            prompt = input(f"{output_filename} already exists. Overwrite? (Y/N)")
+            if prompt[0].upper() != 'Y':
+                continue
 
-            # Open input file
-            logging.info(f"Opening {input_filepath}...")
-            input_file = PdfFileReader(input_filepath)
-            logging.info(f"Opened {input_filepath}...")
-            output_writer = PdfFileWriter()
-            page_count = input_file.numPages
-            logging.debug(f"{page_count} pages found in file {input_filepath}.")
-            for page_number in range(page_count):
-                page = input_file.getPage(page_number)
-                output_writer.addPage(page)
+        # Open input file
+        logging.info(f"Opening {input_filepath}...")
+        input_file = PdfFileReader(input_filepath)
+        logging.info(f"Opened {input_filepath}...")
+        output_writer = PdfFileWriter()
+        page_count = input_file.numPages
+        logging.debug(f"{page_count} pages found in file {input_filepath}.")
+        for page_number in range(page_count):
+            page = input_file.getPage(page_number)
+            output_writer.addPage(page)
 
+        with Password() as password:
             output_writer.encrypt(password)
 
-            # Write to output file
-            logging.info(f"Writing to {output_filepath}...")
-            with open(output_filepath, "wb") as output_file:
-                output_writer.write(output_file)
-            logging.info(f"Written to {output_filepath}...")
+        # Write to output file
+        logging.info(f"Writing to {output_filepath}...")
+        with open(output_filepath, "wb") as output_file:
+            output_writer.write(output_file)
+        logging.info(f"Written to {output_filepath}...")
 
-
-    del password
-    gc.collect()
 
 
 if __name__ == "__main__":
