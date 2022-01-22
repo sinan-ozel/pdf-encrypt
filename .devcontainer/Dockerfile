@@ -9,6 +9,7 @@ RUN pip install -r requirements.txt
 
 RUN apt update
 RUN apt install vim -y
+RUN git config --global core.autocrlf input
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
