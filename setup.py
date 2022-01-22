@@ -7,4 +7,9 @@ setup(
     author='Sinan Ozel',
     license='MIT',
     packages=['PyPDF2'],
+    classifiers=[
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        'Programming Language :: Python',
+    ]
 )
