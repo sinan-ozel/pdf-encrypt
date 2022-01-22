@@ -43,7 +43,7 @@ def main(filepaths, suffix:str=None, output_folder:str=None):
         filepaths = glob(filepaths)
     if not filepaths:
         raise ValueError("No input filenames.")
-    logging.debug("{} files found.".format(len(filepaths)))
+    logging.debug("%d files found.", len(filepaths))
 
     # Check if all files exist.
     for input_filepath in filepaths:
@@ -71,12 +71,12 @@ def main(filepaths, suffix:str=None, output_folder:str=None):
                 continue
 
         # Open input file
-        logging.info(f"Opening {input_filepath}...")
+        logging.info("Opening %s...", input_filepath)
         input_file = PdfFileReader(input_filepath)
-        logging.info(f"Opened {input_filepath}...")
+        logging.info("Opened %s...", input_filepath)
         output_writer = PdfFileWriter()
         page_count = input_file.numPages
-        logging.debug(f"{page_count} pages found in file {input_filepath}.")
+        logging.debug("%d pages found in file %s.", page_count, input_filepath)
         for page_number in range(page_count):
             page = input_file.getPage(page_number)
             output_writer.addPage(page)
@@ -85,10 +85,10 @@ def main(filepaths, suffix:str=None, output_folder:str=None):
             output_writer.encrypt(password)
 
         # Write to output file
-        logging.info(f"Writing to {output_filepath}...")
+        logging.info("Writing to %s...", output_filepath)
         with open(output_filepath, "wb") as output_file:
             output_writer.write(output_file)
-        logging.info(f"Written to {output_filepath}...")
+        logging.info("Written to %s...", output_filepath)
 
 
 
