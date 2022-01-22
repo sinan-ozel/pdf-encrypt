@@ -5,4 +5,5 @@ output/*.pdf
 __pycache__
 build
 dist
-*.spec
+.pypirc
+.pytestcache
