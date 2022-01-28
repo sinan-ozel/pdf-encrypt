@@ -29,7 +29,7 @@ class Password:
     https://www.sjoerdlangkemper.nl/2016/06/09/clearing-memory-in-python/
     """
     def __enter__(self):
-        self.password = getpass()
+        self.password = getpass()  #pylint: disable=attribute-defined-outside-init
         retyped_passwd = getpass()
         if self.password != retyped_passwd:
             clearmem(self.password)
